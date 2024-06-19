@@ -1,3 +1,8 @@
+"""
+	NOTE:
+		Adding clouds to the BackGround
+"""
+
 import pygame
 from random import randint, choice
 
@@ -80,7 +85,7 @@ class Enemy(pygame.sprite.Sprite):
 			FLY_SURF_2 = pygame.image.load("Graphics/Fly/Fly2.png").convert_alpha()
 			self.SURFS = [FLY_SURF_1, FLY_SURF_2]
 			
-			Y_POS = 310
+			Y_POS = FLOOR - 90
 			self.enemy_speed = 8
 
 		self.obstacle_index = 0
@@ -107,8 +112,30 @@ class Enemy(pygame.sprite.Sprite):
 		self.animation()
 		self.movement() 
 
+class Cloud(pygame.sprite.Sprite):
 
-#screen
+	def __init__(self, num):
+		super().__init__()
+
+		CLOUD_1 = pygame.image.load("Graphics/Clouds/cloud1.png").convert_alpha()
+		CLOUD_2 = pygame.image.load("Graphics/Clouds/cloud2.png").convert_alpha()
+		CLOUD_3 = pygame.image.load("Graphics/Clouds/cloud3.png").convert_alpha()
+		self.CLOUDS = [CLOUD_1, CLOUD_2, CLOUD_3]
+
+		self.image = self.CLOUDS[num]
+		self.rect = pygame.rect.Rect(800, 0, 200, 200)
+
+	def movement(self):
+		self.rect.x -= 1
+
+		if self.rect.right <= 0:
+			self.kill()
+
+	def update(self):
+		self.movement()
+
+
+# screen
 WIDTH = 800
 HEIGHT = 500
 
@@ -116,7 +143,7 @@ screen = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Intro to pygame")
 
 
-#global variables
+# global variables
 running = True
 
 CLOCK = pygame.time.Clock()
@@ -125,11 +152,24 @@ FONT = pygame.font.Font("Fonts/font1.ttf",35)
 
 game_state = "OUTRO"
 
-FLOOR = 400
+FLOOR = 430
 
 BG_MUSIC = pygame.mixer.Sound("Audio/music.wav")
-BG_MUSIC.set_volume(0.6)
+BG_MUSIC.set_volume(0.5)
 BG_MUSIC.play(loops = -1)
+
+# Groups
+Player = pygame.sprite.GroupSingle(sprite=Player())
+Enemies = pygame.sprite.Group()
+Clouds = pygame.sprite.Group()
+Clouds.add(Cloud(0))
+
+# Timers
+obstacle_adder = pygame.USEREVENT + 1
+pygame.time.set_timer(obstacle_adder, 1400)
+
+cloud_adder = pygame.USEREVENT + 2
+pygame.time.set_timer(cloud_adder, randint(5*1000, 15*1000))
 
 
 # ACTIVE SCREEN
@@ -148,12 +188,6 @@ def SCORE_DISPLAY():
 
 	return score
 
-Player = pygame.sprite.GroupSingle(sprite=Player())
-Enemies = pygame.sprite.Group()
-
-# 'Obstacle adder' Event trigger ( userevent )
-obstacle_adder = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_adder, 1400)
 
 #checking collision
 def IS_COLLIDE():
@@ -194,6 +228,10 @@ while running:
 			if event.type == obstacle_adder:
 				Enemies.add(Enemy(choice(["snail","snail","snail","fly"])))
 
+			# Cloud adder
+			if event.type == cloud_adder:
+				Clouds.add(Cloud(choice([0,1,2])))
+
 		elif game_state == "OUTRO":
 
 			if event.type == pygame.KEYDOWN:
@@ -204,6 +242,9 @@ while running:
 
 					Enemies.empty()
 
+					Clouds.empty()
+					Clouds.add(Cloud(2))
+
 					restart_time = pygame.time.get_ticks()//1000
 
 
@@ -211,13 +252,18 @@ while running:
 		#screen
 		screen.blit(BG_SURF, (0,0))
 		screen.blit(GROUND_SURF, (0,FLOOR))
-		score = SCORE_DISPLAY()
 
+		#Drawing the Groups
 		Player.update("ACTIVE")
 		Player.draw(screen)
 
 		Enemies.update()
 		Enemies.draw(screen)
+
+		Clouds.update()
+		Clouds.draw(screen)
+
+		score = SCORE_DISPLAY()
 
 		if IS_COLLIDE(): game_state = "OUTRO"
 
