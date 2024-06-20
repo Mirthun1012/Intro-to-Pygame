@@ -160,9 +160,9 @@ game_state = "OUTRO"
 
 FLOOR = 430
 
-BG_MUSIC = pygame.mixer.Sound("Audio/music.wav")
-BG_MUSIC.set_volume(0.5)
-BG_MUSIC.play(loops = -1)
+# BG Music
+pygame.mixer.music.load("Audio/music.wav")
+pygame.mixer.music.set_volume(0.5)
 
 # Groups
 Player = pygame.sprite.GroupSingle(sprite=Player())
@@ -245,6 +245,8 @@ while running:
 				if event.key == pygame.K_SPACE:
 					pygame.time.delay(300)
 
+					pygame.mixer.music.play(loops = -1)
+
 					game_state = "ACTIVE"
 
 					Player.update("OUTRO")
@@ -276,6 +278,7 @@ while running:
 
 		if IS_COLLIDE():
 			game_state = "OUTRO"
+			pygame.mixer.music.stop()
 
 
 	elif game_state == "OUTRO":
