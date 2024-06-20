@@ -1,6 +1,12 @@
 """
 	NOTE:
-		Adding clouds to the BackGround
+		Need to add delays for specific areas!
+
+		1. After the player getting out
+
+		2. After the player restart --- ADDED 300ms WHEN PLAYER PRESSES SPACE IN OUTRO SCREEN
+										to eliminate - JUMP AT START OF THE GAME DUE TO 
+												 	   PLAYER HOLD THE SPACE-BAR FOR SOME SECS  
 """
 
 import pygame
@@ -55,7 +61,7 @@ class Player(pygame.sprite.Sprite):
 			self.image = self.PLAYER_WALK[int(self.player_index)]
 
 	def restart_changes(self):
-		self.rect.bottom = 400
+		self.rect.bottom = FLOOR-2
 		self.gravity = 0
 
 	def update(self, screen_state):
@@ -126,7 +132,7 @@ class Cloud(pygame.sprite.Sprite):
 		self.rect = pygame.rect.Rect(800, 0, 200, 200)
 
 	def movement(self):
-		self.rect.x -= 1
+		self.rect.x -= 0.8
 
 		if self.rect.right <= 0:
 			self.kill()
@@ -184,7 +190,7 @@ def SCORE_DISPLAY():
 	score_surf = FONT.render("Score: "+str(score), True, "Black")
 	score_rect = score_surf.get_rect(center = (400,40))
 
-	screen.blit(score_surf,score_rect)
+	screen.blit(score_surf, score_rect)
 
 	return score
 
@@ -235,7 +241,10 @@ while running:
 		elif game_state == "OUTRO":
 
 			if event.type == pygame.KEYDOWN:
+
 				if event.key == pygame.K_SPACE:
+					pygame.time.delay(300)
+
 					game_state = "ACTIVE"
 
 					Player.update("OUTRO")
@@ -265,7 +274,8 @@ while running:
 
 		score = SCORE_DISPLAY()
 
-		if IS_COLLIDE(): game_state = "OUTRO"
+		if IS_COLLIDE():
+			game_state = "OUTRO"
 
 
 	elif game_state == "OUTRO":
