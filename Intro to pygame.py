@@ -1,5 +1,6 @@
 """
 	NOTE:
+<<<<<<< HEAD
 		Need to add delays for specific areas!
 
 		1. After the player getting out
@@ -7,10 +8,16 @@
 		2. After the player restart --- ADDED 300ms WHEN PLAYER PRESSES SPACE IN OUTRO SCREEN
 										to eliminate - JUMP AT START OF THE GAME DUE TO 
 												 	   PLAYER HOLD THE SPACE-BAR FOR SOME SECS  
+=======
+		
+		1. Reduced the spawning time of clouds
+		2. Added different speed to each of the cloud 
+		3. Spawning at random x axis and y axis
+>>>>>>> BG
 """
 
 import pygame
-from random import randint, choice
+from random import randint, choice, uniform
 
 pygame.init()
 
@@ -123,16 +130,22 @@ class Cloud(pygame.sprite.Sprite):
 	def __init__(self, num):
 		super().__init__()
 
+		self.speed = uniform(1.0, 3.0)
+
 		CLOUD_1 = pygame.image.load("Graphics/Clouds/cloud1.png").convert_alpha()
 		CLOUD_2 = pygame.image.load("Graphics/Clouds/cloud2.png").convert_alpha()
 		CLOUD_3 = pygame.image.load("Graphics/Clouds/cloud3.png").convert_alpha()
 		self.CLOUDS = [CLOUD_1, CLOUD_2, CLOUD_3]
 
 		self.image = self.CLOUDS[num]
-		self.rect = pygame.rect.Rect(800, 0, 200, 200)
+		self.rect = pygame.rect.Rect(randint(800, 850), randint(0, 10), 200, 200)
 
 	def movement(self):
+<<<<<<< HEAD
 		self.rect.x -= 0.8
+=======
+		self.rect.x -= self.speed
+>>>>>>> BG
 
 		if self.rect.right <= 0:
 			self.kill()
@@ -160,22 +173,30 @@ game_state = "OUTRO"
 
 FLOOR = 430
 
+<<<<<<< HEAD
 # BG Music
 pygame.mixer.music.load("Audio/music.wav")
 pygame.mixer.music.set_volume(0.5)
+=======
+
+# BG Music
+pygame.mixer.music.load("Audio/music.wav")
+pygame.mixer.music.set_volume(0.5)
+
+>>>>>>> BG
 
 # Groups
 Player = pygame.sprite.GroupSingle(sprite=Player())
 Enemies = pygame.sprite.Group()
 Clouds = pygame.sprite.Group()
-Clouds.add(Cloud(0))
+
 
 # Timers
 obstacle_adder = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_adder, 1400)
 
 cloud_adder = pygame.USEREVENT + 2
-pygame.time.set_timer(cloud_adder, randint(5*1000, 15*1000))
+pygame.time.set_timer(cloud_adder, randint(3*1000, 5*1000))
 
 
 # ACTIVE SCREEN
@@ -193,7 +214,6 @@ def SCORE_DISPLAY():
 	screen.blit(score_surf, score_rect)
 
 	return score
-
 
 #checking collision
 def IS_COLLIDE():
@@ -241,7 +261,11 @@ while running:
 		elif game_state == "OUTRO":
 
 			if event.type == pygame.KEYDOWN:
+<<<<<<< HEAD
 
+=======
+				# restart
+>>>>>>> BG
 				if event.key == pygame.K_SPACE:
 					pygame.time.delay(300)
 
@@ -254,7 +278,7 @@ while running:
 					Enemies.empty()
 
 					Clouds.empty()
-					Clouds.add(Cloud(2))
+					Clouds.add(Cloud(1))
 
 					restart_time = pygame.time.get_ticks()//1000
 
@@ -275,7 +299,11 @@ while running:
 		Clouds.draw(screen)
 
 		score = SCORE_DISPLAY()
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> BG
 		if IS_COLLIDE():
 			game_state = "OUTRO"
 			pygame.mixer.music.stop()
