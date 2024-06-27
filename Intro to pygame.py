@@ -141,7 +141,7 @@ class Enemy(pygame.sprite.Sprite):
 
 		if self.rect.right <= 0:
 			self.kill()
-			enemy_speed += 1
+			enemy_speed += 0.5
 
 		else:
 			self.rect.x -= enemy_speed
@@ -259,6 +259,8 @@ while running:
 
 					Clouds.empty()
 					Clouds.add(Cloud(1))
+
+					enemy_speed = 7
 
 					restart_time = pygame.time.get_ticks()//1000
 
