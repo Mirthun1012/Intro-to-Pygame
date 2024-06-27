@@ -11,6 +11,41 @@ from random import randint, choice, uniform
 pygame.init()
 
 
+# screen
+WIDTH = 800
+HEIGHT = 500
+
+screen = pygame.display.set_mode((WIDTH,HEIGHT))
+pygame.display.set_caption("Intro to pygame")
+
+
+# global variables
+running = True
+
+CLOCK = pygame.time.Clock()
+
+FONT = pygame.font.Font("Fonts/font1.ttf",35)
+
+game_state = "OUTRO"
+
+FLOOR = 430
+
+enemy_speed = 7
+
+
+# BG Music
+pygame.mixer.music.load("Audio/music.wav")
+pygame.mixer.music.set_volume(0.5)
+
+
+# Timers
+obstacle_adder = pygame.USEREVENT + 1
+pygame.time.set_timer(obstacle_adder, 1400)
+
+cloud_adder = pygame.USEREVENT + 2
+pygame.time.set_timer(cloud_adder, randint(3*1000, 5*1000))
+
+
 class Player(pygame.sprite.Sprite):
 
 	def __init__(self):
@@ -80,7 +115,6 @@ class Enemy(pygame.sprite.Sprite):
 			self.SURFS = [SNAIL_SURF_1, SNAIL_SURF_2]
 			
 			Y_POS = FLOOR
-			self.enemy_speed = 7
 
 		else:
 			FLY_SURF_1 = pygame.image.load("Graphics/Fly/Fly1.png").convert_alpha()
@@ -88,7 +122,6 @@ class Enemy(pygame.sprite.Sprite):
 			self.SURFS = [FLY_SURF_1, FLY_SURF_2]
 			
 			Y_POS = FLOOR - 90
-			self.enemy_speed = 8
 
 		self.obstacle_index = 0
 
@@ -104,11 +137,14 @@ class Enemy(pygame.sprite.Sprite):
 		self.image = self.SURFS[int(self.obstacle_index)]
 
 	def movement(self):
+		global enemy_speed
+
 		if self.rect.right <= 0:
 			self.kill()
+			enemy_speed += 1
 
 		else:
-			self.rect.x -= self.enemy_speed
+			self.rect.x -= enemy_speed
 
 	def update(self):
 		self.animation()
@@ -139,43 +175,10 @@ class Cloud(pygame.sprite.Sprite):
 		self.movement()
 
 
-# screen
-WIDTH = 800
-HEIGHT = 500
-
-screen = pygame.display.set_mode((WIDTH,HEIGHT))
-pygame.display.set_caption("Intro to pygame")
-
-
-# global variables
-running = True
-
-CLOCK = pygame.time.Clock()
-
-FONT = pygame.font.Font("Fonts/font1.ttf",35)
-
-game_state = "OUTRO"
-
-FLOOR = 430
-
-
-# BG Music
-pygame.mixer.music.load("Audio/music.wav")
-pygame.mixer.music.set_volume(0.5)
-
-
 # Groups
 Player = pygame.sprite.GroupSingle(sprite=Player())
 Enemies = pygame.sprite.Group()
 Clouds = pygame.sprite.Group()
-
-
-# Timers
-obstacle_adder = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_adder, 1400)
-
-cloud_adder = pygame.USEREVENT + 2
-pygame.time.set_timer(cloud_adder, randint(3*1000, 5*1000))
 
 
 # ACTIVE SCREEN
